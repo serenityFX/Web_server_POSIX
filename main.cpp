@@ -14,7 +14,8 @@
 void process(int d);
 void skeleton_daemon();
 
-static const char not_found[] = "HTTP/1.0 404 NOT FOUND\r\nContent-Type: text/html\r\n\r\n";
+static const char not_found[] 	= "HTTP/1.0 404 NOT FOUND\r\nContent-Type: text/html\r\n\r\n";
+static const char templ[] 		= "HTTP/1.0 200 OK\r\nContent-length: %d\r\nConnection: close\r\nContent-Type: text/html\r\n\r\n%s";
 
  
 int main(int argc , char *argv[])
@@ -119,9 +120,21 @@ while(1)
 }	
 	printf("READ FROM SOCKET: %s\n", Buffer);
 	
-	std::string str(Buffer);
+	char req[3];
+	memccpy(req,Buffer,3);
 	
-	int n = send(d, not_found, sizeof(not_found), 0);
+	//std::string str(Buffer);
+	
+	if( strcmp(req,"GET",3) == 0)
+	{
+		char buff[512] = {0};
+		sprintf(buff,templ,11,"hello world");
+		send(d, buff, sizeof(buff), 0);
+	}
+	else
+		send(d, not_found, sizeof(not_found), 0);
+	
+	
 }
 
 void skeleton_daemon()
