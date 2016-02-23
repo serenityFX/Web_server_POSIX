@@ -5,6 +5,7 @@
 #include<sys/socket.h>
 #include<arpa/inet.h> //inet_addr
 #include<unistd.h>    //write
+#include<string>
  
 #include<pthread.h> //for threading , link with lpthread
  
@@ -12,6 +13,30 @@ void process(int d);
  
 int main(int argc , char *argv[])
 {
+	std::string		SrvAddress;
+	std::string		RootDir;
+	std::uint16_t	SrvPort;
+	int opt = 0;
+
+	while ((opt = getopt(argc, argv, "h:p:d:")) != -1) {
+		switch (opt) {
+		case 'h':
+			SrvAddress.assign(optarg);
+			break;
+		case 'p':
+			SrvPort = atoi(optarg);
+			break;
+		case 'd':
+			RootDir.assign(optarg);
+			break;
+		default: /* '?' */
+			fprintf(stderr, "Usage: %s -h <ip> -p <port> -d <directory>\n",
+				argv[0]);
+			exit(EXIT_FAILURE);
+		}
+	}
+	
+	
     int socket_desc , new_socket , c , *new_sock;
     struct sockaddr_in server , client;
     char *message;
@@ -25,8 +50,8 @@ int main(int argc , char *argv[])
      
     //Prepare the sockaddr_in structure
     server.sin_family = AF_INET;
-    server.sin_addr.s_addr = htonl(INADDR_ANY);
-    server.sin_port = htons( 8888 );
+    server.sin_addr.s_addr = htonl(SrvAddress);
+    server.sin_port = htons( SrvPort );
      
     //Bind
     if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
@@ -39,7 +64,6 @@ int main(int argc , char *argv[])
     //Listen
     listen(socket_desc , SOMAXCONN);
      
-	 
 	int pid;
     while(true)
     {
@@ -78,6 +102,8 @@ while(1)
 		break;
 }
 }	
+
+
 	printf("READ FROM SOCKET: %s\n", Buffer);
 }
  
