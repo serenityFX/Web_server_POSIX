@@ -143,14 +143,13 @@ while(1)
 		}
 		
 		if(strcmp(file,"HTTP/1.0") == 0)
-		{
-			
+		{	
 			send(d, empty, sizeof(empty), 0);
 		}
 		else if (strcmp(file,"/") == 0)
 		{
 			printf("EMPTY request");
-			send(d, not_found, sizeof(not_found), 0);
+			send(d, empty, sizeof(empty), 0);
 		}
 		else
 		{
