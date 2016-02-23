@@ -121,11 +121,11 @@ while(1)
 	printf("READ FROM SOCKET: %s\n", Buffer);
 	
 	char req[3];
-	memccpy(req,Buffer,3);
+	memcpy(req,Buffer,3);
 	
 	//std::string str(Buffer);
 	
-	if( strcmp(req,"GET",3) == 0)
+	if( strcmp(req,"GET") == 0)
 	{
 		char buff[512] = {0};
 		sprintf(buff,templ,11,"hello world");
