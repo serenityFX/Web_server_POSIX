@@ -127,9 +127,26 @@ while(1)
 	
 	if( strcmp(req,"GET") == 0)
 	{
-		char buff[512] = {0};
+		char buff[2048] = {0};
+		char file[1024] = {0};
+		
+		char *ptr = Buffer[4];
+		char *ptrF = file;
+		
+		while(ptr != ' ')
+		{
+			*ptrF = ptr;
+			ptr++;
+			ptrF++;
+		}
+		
+		RootDir.append(file);
+		
+		printf("FilePath: %s",RootDir.c_str());
+
 		sprintf(buff,templ,11,"hello world");
 		send(d, buff, sizeof(buff), 0);
+		
 	}
 	else
 		send(d, not_found, sizeof(not_found), 0);
