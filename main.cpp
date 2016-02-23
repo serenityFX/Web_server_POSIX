@@ -17,6 +17,13 @@ int main(int argc , char *argv[])
 	std::string		RootDir;
 	std::uint16_t	SrvPort;
 	int opt = 0;
+	
+	if(argc < 6)
+{
+			fprintf(stderr, "Usage: %s -h <ip> -p <port> -d <directory>\n",
+				argv[0]);
+			return 0;
+}
 
 	while ((opt = getopt(argc, argv, "h:p:d:")) != -1) {
 		switch (opt) {
@@ -50,7 +57,7 @@ int main(int argc , char *argv[])
      
     //Prepare the sockaddr_in structure
     server.sin_family = AF_INET;
-    server.sin_addr.s_addr = htonl(SrvAddress);
+    server.sin_addr.s_addr = inet_addr(SrvAddress.c_str());
     server.sin_port = htons( SrvPort );
      
     //Bind
