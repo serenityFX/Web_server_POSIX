@@ -51,7 +51,7 @@ int main(int argc , char *argv[])
 		}
 	}
 	
-	//skeleton_daemon();
+	skeleton_daemon();
 	
 	
     int socket_desc , new_socket , c , *new_sock;
