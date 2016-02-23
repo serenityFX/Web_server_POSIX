@@ -16,7 +16,7 @@ int main(int argc , char *argv[])
     char *message;
      
     //Create socket
-    socket_desc = socket(AF_INET , SOCK_STREAM , 0);
+    socket_desc = socket(AF_INET , SOCK_STREAM , IPPROTO_TCP);
     if (socket_desc == -1)
     {
         printf("Could not create socket");
@@ -24,7 +24,7 @@ int main(int argc , char *argv[])
      
     //Prepare the sockaddr_in structure
     server.sin_family = AF_INET;
-    server.sin_addr.s_addr = INADDR_ANY;
+    server.sin_addr.s_addr = htonl(INADDR_ANY);
     server.sin_port = htons( 8888 );
      
     //Bind
@@ -36,11 +36,8 @@ int main(int argc , char *argv[])
     puts("bind done");
      
     //Listen
-    listen(socket_desc , 3);
+    listen(socket_desc , SOMAXCONN);
      
-    //Accept and incoming connection
-    puts("Waiting for incoming connections...");
-    c = sizeof(struct sockaddr_in);
     while(true)
     {
 		if(new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c) != -1)
@@ -62,7 +59,7 @@ int main(int argc , char *argv[])
         }
          
         //Now join the thread , so that we dont terminate before the thread
-        //pthread_join( sniffer_thread , NULL);
+        pthread_detach(sniffer_thread);
         puts("Handler assigned");
 		}
         
@@ -85,36 +82,24 @@ void *connection_handler(void *socket_desc)
     //Get the socket descriptor
     int sock = *(int*)socket_desc;
     int read_size;
-    char *message , client_message[2000];
+    char client_message[4096] = {0};
      
-    //Send some messages to the client
-    message = "Greetings! I am your connection handler\n";
-    write(sock , message , strlen(message));
-     
-    message = "Now type something and i shall repeat what you type \n";
-    write(sock , message , strlen(message));
      
     //Receive a message from client
-    while( (read_size = recv(sock , client_message , 2000 , 0)) > 0 )
+	unsigned int counter = 0;
+    while( (read_size = recv(sock , client_message + 4096 - counter , 4096 , MSG_NOSIGNAL)) > 0 )
     {
+		counter += read_size;
         //Send the message back to client
-        write(sock , client_message , strlen(client_message));
     }
      
-    if(read_size == 0)
-    {
-        puts("Client disconnected");
-        fflush(stdout);
-    }
-    else if(read_size == -1)
-    {
-        perror("recv failed");
-    }
-         
     //Free the socket pointer
 	shutdown(sock,SHUT_RDWR);
+	close(sock);
     free(socket_desc);
      
+	 printf("recive %s\n",client_message)
+	 
     return 0;
 }
 
