@@ -83,11 +83,22 @@ void *connection_handler(void *socket_desc)
     int sock = *(int*)socket_desc;
     int read_size;
     char client_message[4096] = {0};
+	
+	printf("I'm HERE!!!!!\n");
      
+	 unsigned int counter = 0;
+	 while(true)
+	 {
+		 if(read_size = recv(sock , client_message, 4096 , MSG_NOSIGNAL) > 0)
+		 {
+			 counter += read_size;
+			 break;
+		 }
+	 }
      
     //Receive a message from client
-	unsigned int counter = 0;
-    while( (read_size = recv(sock , client_message + 4096 - counter , 4096 , MSG_NOSIGNAL)) > 0 )
+	
+    while( (read_size = recv(sock , client_message + counter , 4096 - counter , MSG_NOSIGNAL)) > 0 )
     {
 		counter += read_size;
         //Send the message back to client
@@ -98,8 +109,20 @@ void *connection_handler(void *socket_desc)
 	close(sock);
     free(socket_desc);
      
-	 printf("recive %s\n",client_message)
+	 printf("receive from client %s\n",client_message);
 	 
     return 0;
 }
+
+
+do 
+       {
+           n = recv(newsockfd, buffer, sizeof(buffer), MSG_DONTWAIT);  // Use recv instead of read
+           if (n>0) 
+           {
+              buffer[n] = 0;
+              msg += buffer;                    // Actually increase the "large" buffer
+              pkt++;
+           }
+       } while (n > 0 || ((n == -1) && ((errno == EAGAIN) || (errno == EWOULDBLOCK)) && pkt == 0));
 
