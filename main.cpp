@@ -157,7 +157,7 @@ while(1)
 				ptrData++;
 				size++;
 			}
-			sprintf(buff,templ,size,fileData);
+			sprintf(buff,templ,fileData);
 			send(d, buff, sizeof(buff), 0);
 		}
 		else
