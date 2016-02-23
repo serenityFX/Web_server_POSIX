@@ -121,7 +121,7 @@ while(1)
 	
 	std::string str(Buffer);
 	
-	n = send(d, not_found, sizeof(not_found), 0);
+	int n = send(d, not_found, sizeof(not_found), 0);
 }
 
 void skeleton_daemon()
