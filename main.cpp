@@ -17,8 +17,8 @@ void skeleton_daemon();
 
 static const char not_found[] 	= "HTTP/1.0 404 NOT FOUND\r\nContent-Type: text/html\r\n\r\n";
 static const char templ[] 		= "HTTP/1.0 200 OK\r\nContent-length: %d\r\nConnection: close\r\nContent-Type: text/html\r\n\r\n%s";
+static const char empty[] 		= "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n"
 
- 
 int main(int argc , char *argv[])
 {
 	std::string		SrvAddress;
@@ -142,28 +142,35 @@ while(1)
 			ptrF++;
 		}
 		
-		RootDir.append(file);
-		
-		int fd = open (RootDir.c_str(), O_RDONLY);
-		
-		if(fd != -1)
+		if(strcmp(file,"HTTP/1.0") == 0)
 		{
-			int size = 0;
-			char ch;
-			char *ptrData = fileData;
-			while ((read (fd, &ch, 1)) > 0)
-			{
-				*ptrData = ch;
-				ptrData++;
-				size++;
-			}
-			sprintf(buff,templ,size,fileData);
-			send(d, buff, sizeof(buff), 0);
+			printf("EMPTY request");
+			empty
+			send(d, empty, sizeof(empty), 0);
 		}
 		else
-		send(d, not_found, sizeof(not_found), 0);
+		{
+			RootDir.append(file);
 		
+			int fd = open (RootDir.c_str(), O_RDONLY);
 		
+			if(fd != -1)
+			{
+				int size = 0;
+				char ch;
+				char *ptrData = fileData;
+				while ((read (fd, &ch, 1)) > 0)
+				{
+					*ptrData = ch;
+					ptrData++;
+					size++;
+				}
+				sprintf(buff,templ,size,fileData);
+				send(d, buff, sizeof(buff), 0);
+			}
+			else
+			send(d, not_found, sizeof(not_found), 0);
+		}	
 	}
 	else
 		send(d, not_found, sizeof(not_found), 0);
