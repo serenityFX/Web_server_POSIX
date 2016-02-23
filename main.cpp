@@ -145,7 +145,6 @@ while(1)
 		if(strcmp(file,"HTTP/1.0") == 0)
 		{
 			printf("EMPTY request");
-			empty
 			send(d, empty, sizeof(empty), 0);
 		}
 		else
