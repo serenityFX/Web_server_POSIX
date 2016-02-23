@@ -43,11 +43,7 @@ int main(int argc , char *argv[])
 		if(new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c) != -1)
 		{
 			puts("Connection accepted");
-         
-        //Reply to the client
-        message = "Hello Client , I have received your connection. And now I will assign a handler for you\n";
-        write(new_socket , message , strlen(message));
-         
+  
         pthread_t sniffer_thread;
         new_sock = static_cast<int *>(malloc(1));
         *new_sock = new_socket;
@@ -114,15 +110,4 @@ void *connection_handler(void *socket_desc)
     return 0;
 }
 
-
-do 
-       {
-           n = recv(newsockfd, buffer, sizeof(buffer), MSG_DONTWAIT);  // Use recv instead of read
-           if (n>0) 
-           {
-              buffer[n] = 0;
-              msg += buffer;                    // Actually increase the "large" buffer
-              pkt++;
-           }
-       } while (n > 0 || ((n == -1) && ((errno == EAGAIN) || (errno == EWOULDBLOCK)) && pkt == 0));
 
