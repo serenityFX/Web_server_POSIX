@@ -11,7 +11,7 @@
  
 #include<pthread.h> //for threading , link with lpthread
  
-void process(int d);
+void process(int d, std::string rootDir);
 void skeleton_daemon();
 
 static const char not_found[] 	= "HTTP/1.0 404 NOT FOUND\r\nContent-Type: text/html\r\n\r\n";
@@ -92,7 +92,7 @@ int main(int argc , char *argv[])
 		if (pid == 0 )
 		{
 			close( socket_desc );
-			process(new_socket);
+			process(new_socket,RootDir);
 			shutdown(new_socket,SHUT_RDWR);
 			close(new_socket);
 			return 0;
@@ -104,7 +104,7 @@ int main(int argc , char *argv[])
     return 0;
 }
 
-void process(int d)
+void process(int d,std::string &RootDir)
 {
 	int len = 0;
 	char Buffer[4096];
@@ -130,12 +130,12 @@ while(1)
 		char buff[2048] = {0};
 		char file[1024] = {0};
 		
-		char *ptr = Buffer[4];
+		char *ptr = &Buffer[4];
 		char *ptrF = file;
 		
-		while(ptr != ' ')
+		while(ptr != " ")
 		{
-			*ptrF = ptr;
+			*ptrF = *ptr;
 			ptr++;
 			ptrF++;
 		}
