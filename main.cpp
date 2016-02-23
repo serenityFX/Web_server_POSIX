@@ -135,7 +135,7 @@ while(1)
 		char *ptr = &Buffer[4];
 		char *ptrF = file;
 		
-		while(ptr && (*ptr != ' ' && *ptr != '?')
+		while(ptr && (*ptr != ' ' && *ptr != '?'))
 		{
 			*ptrF = *ptr;
 			ptr++;
