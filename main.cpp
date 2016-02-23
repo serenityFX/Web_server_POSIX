@@ -120,55 +120,40 @@ while(1)
 
 void skeleton_daemon()
 {
-	pid_t pid;
+	 pid = fork();
 
-	/* Fork off the parent process */
-	pid = fork();
-
-	/* An error occurred */
-	if (pid < 0)
-		exit(EXIT_FAILURE);
-
-	/* Success: Let the parent terminate */
-	if (pid > 0)
-		exit(EXIT_SUCCESS);
-
-	/* On success: The child process becomes session leader */
-	if (setsid() < 0)
-		exit(EXIT_FAILURE);
-
-	/* Catch, ignore and handle signals */
-	//TODO: Implement a working signal handler */
-	signal(SIGCHLD, SIG_IGN);
-	signal(SIGHUP, SIG_IGN);
-
-	/* Fork off for the second time*/
-	pid = fork();
-
-	/* An error occurred */
-	if (pid < 0)
-		exit(EXIT_FAILURE);
-
-	/* Success: Let the parent terminate */
-	if (pid > 0)
-		exit(EXIT_SUCCESS);
-
-	/* Set new file permissions */
-	umask(0);
-
-	/* Change the working directory to the root directory */
-	/* or another appropriated directory */
-	chdir("/");
-
-	/* Close all open file descriptors */
-	int x;
-	for (x = sysconf(_SC_OPEN_MAX); x>0; x--)
-	{
-		close(x);
-	}
-
-	/* Open the log file */
-	openlog("firstdaemon", LOG_PID, LOG_DAEMON);
+    if (pid == -1) // если не удалось запустить потомка
+    {
+        // выведем на экран ошибку и её описание
+        printf("Error: Start Daemon failed (%s)\n", strerror(errno));
+        
+        return -1;
+    }
+    else if (!pid) // если это потомок
+    {
+        // данный код уже выполняется в процессе потомка
+        // разрешаем выставлять все биты прав на создаваемые файлы, 
+        // иначе у нас могут быть проблемы с правами доступа
+        umask(0);
+        
+        // создаём новый сеанс, чтобы не зависеть от родителя
+        setsid();
+        
+        // переходим в корень диска, если мы этого не сделаем, то могут быть проблемы.
+        // к примеру с размантированием дисков
+        chdir("/");
+        
+        // закрываем дискрипторы ввода/вывода/ошибок, так как нам они больше не понадобятся
+        close(STDIN_FILENO);
+        close(STDOUT_FILENO);
+        close(STDERR_FILENO);
+        
+    }
+    else // если это родитель
+    {
+        // завершим процес, т.к. основную свою задачу (запуск демона) мы выполнили
+        return 0;
+    }
 }
  
 
