@@ -11,7 +11,7 @@
  
 #include<pthread.h> //for threading , link with lpthread
  
-void process(int d, std::string rootDir);
+void process(int d, std::string &rootDir);
 void skeleton_daemon();
 
 static const char not_found[] 	= "HTTP/1.0 404 NOT FOUND\r\nContent-Type: text/html\r\n\r\n";
