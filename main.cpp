@@ -17,7 +17,7 @@ void skeleton_daemon();
 
 static const char not_found[] 	= "HTTP/1.0 404 NOT FOUND\r\nContent-Type: text/html\r\n\r\n";
 static const char templ[] 		= "HTTP/1.0 200 OK\r\nContent-length: %d\r\nConnection: close\r\nContent-Type: text/html\r\n\r\n%s";
-static const char empty[] 		= "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n"
+static const char empty[] 		= "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n";
 
 int main(int argc , char *argv[])
 {
