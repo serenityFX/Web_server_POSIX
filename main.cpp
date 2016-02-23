@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <syslog.h>
 #include <fcntl.h>
+#include <thread>
  
 #include<pthread.h> //for threading , link with lpthread
  
@@ -144,12 +145,12 @@ while(1)
 		
 		if(strcmp(file,"HTTP/1.0") == 0)
 		{	
-			send(d, empty, sizeof(empty), 0);
+			send(d, not_found, sizeof(not_found), 0);
 		}
 		else if (strcmp(file,"/") == 0)
 		{
 			printf("EMPTY request");
-			send(d, empty, sizeof(empty), 0);
+			send(d, not_found, sizeof(not_found), 0);
 		}
 		else
 		{
