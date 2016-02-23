@@ -8,6 +8,7 @@
 #include<string>
 #include <sys/stat.h>
 #include <syslog.h>
+#include <fcntl.h>
  
 #include<pthread.h> //for threading , link with lpthread
  
@@ -129,11 +130,12 @@ while(1)
 	{
 		char buff[2048] = {0};
 		char file[1024] = {0};
+		char fileData[1024] = {0};
 		
 		char *ptr = &Buffer[4];
 		char *ptrF = file;
 		
-		while(ptr != " ")
+		while(ptr && *ptr != ' ')
 		{
 			*ptrF = *ptr;
 			ptr++;
@@ -142,10 +144,25 @@ while(1)
 		
 		RootDir.append(file);
 		
-		printf("FilePath: %s",RootDir.c_str());
-
-		sprintf(buff,templ,11,"hello world");
-		send(d, buff, sizeof(buff), 0);
+		int fd = open (RootDir.c_str(), O_RDONLY);
+		
+		if(fd != -1)
+		{
+			int size = 0;
+			char ch;
+			char *ptrData = fileData;
+			while ((read (fd, &ch, 1)) > 0)
+			{
+				*ptrData = ch;
+				ptrData++;
+				size++;
+			}
+			sprintf(buff,templ,size,fileData);
+			send(d, buff, sizeof(buff), 0);
+		}
+		else
+		send(d, not_found, sizeof(not_found), 0);
+		
 		
 	}
 	else
