@@ -6,6 +6,8 @@
 #include<arpa/inet.h> //inet_addr
 #include<unistd.h>    //write
 #include<string>
+#include <sys/stat.h>
+#include <syslog.h>
  
 #include<pthread.h> //for threading , link with lpthread
  
@@ -120,7 +122,7 @@ while(1)
 
 void skeleton_daemon()
 {
-	 pid = fork();
+	 int pid = fork();
 
     if (pid == -1) // если не удалось запустить потомка
     {
