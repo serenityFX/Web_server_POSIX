@@ -41,9 +41,11 @@ int main(int argc , char *argv[])
     //Accept and incoming connection
     puts("Waiting for incoming connections...");
     c = sizeof(struct sockaddr_in);
-    while( (new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) )
+    while(true)
     {
-        puts("Connection accepted");
+		if(new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c) != -1)
+		{
+			puts("Connection accepted");
          
         //Reply to the client
         message = "Hello Client , I have received your connection. And now I will assign a handler for you\n";
@@ -62,6 +64,8 @@ int main(int argc , char *argv[])
         //Now join the thread , so that we dont terminate before the thread
         //pthread_join( sniffer_thread , NULL);
         puts("Handler assigned");
+		}
+        
     }
      
     if (new_socket<0)
@@ -108,6 +112,7 @@ void *connection_handler(void *socket_desc)
     }
          
     //Free the socket pointer
+	shutdown(sock,SHUT_RDWR);
     free(socket_desc);
      
     return 0;
