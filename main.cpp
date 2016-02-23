@@ -77,7 +77,7 @@ int main(int argc , char *argv[])
         puts("bind failed");
         return 1;
     }
-    puts("bind done");
+    //puts("bind done");
      
     //Listen
     listen(socket_desc , SOMAXCONN);
@@ -87,7 +87,7 @@ int main(int argc , char *argv[])
     {
 		new_socket = accept(socket_desc, 0, 0);
 		
-		puts("Connection accepted");
+		//puts("Connection accepted");
 		
 		pid = fork();
 		
@@ -120,7 +120,7 @@ while(1)
 		break;
 }
 }	
-	printf("READ FROM SOCKET: %s\n", Buffer);
+	//printf("READ FROM SOCKET: %s\n", Buffer);
 	
 	char req[3];
 	memcpy(req,Buffer,3);
@@ -149,7 +149,7 @@ while(1)
 		}
 		else if (strcmp(file,"/") == 0)
 		{
-			printf("EMPTY request");
+			//printf("EMPTY request");
 			send(d, not_found, sizeof(not_found), 0);
 		}
 		else
