@@ -129,7 +129,7 @@ void skeleton_daemon()
         // выведем на экран ошибку и её описание
         printf("Error: Start Daemon failed (%s)\n", strerror(errno));
         
-        return -1;
+        exit(EXIT_FAILURE);
     }
     else if (!pid) // если это потомок
     {
@@ -154,7 +154,7 @@ void skeleton_daemon()
     else // если это родитель
     {
         // завершим процес, т.к. основную свою задачу (запуск демона) мы выполнили
-        return 0;
+       exit(EXIT_SUCCESS);
     }
 }
  
