@@ -38,76 +38,43 @@ int main(int argc , char *argv[])
     //Listen
     listen(socket_desc , SOMAXCONN);
      
+	 
+	int pid;
     while(true)
     {
-		if(new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c) != -1)
+		new_socket = accept(socket_desc, 0, 0);
+		
+		puts("Connection accepted");
+		
+		pid = fork();
+		
+		if (pid == 0 )
 		{
-			puts("Connection accepted");
-  
-        pthread_t sniffer_thread;
-        new_sock = static_cast<int *>(malloc(1));
-        *new_sock = new_socket;
-         
-        if( pthread_create( &sniffer_thread , NULL ,  connection_handler , (void*) new_sock) < 0)
-        {
-            perror("could not create thread");
-            return 1;
-        }
-         
-        //Now join the thread , so that we dont terminate before the thread
-        pthread_detach(sniffer_thread);
-        puts("Handler assigned");
+			close( socket_desc );
+			process(new_socket);
+			shutdown(new_socket,SHUT_RDWR);
+			close(new_socket);
+			return;
 		}
-        
-    }
-     
-    if (new_socket<0)
-    {
-        perror("accept failed");
-        return 1;
+		else
+			close(new_socket);       
     }
      
     return 0;
+}
+
+void process(int d)
+{
+	int len = 0;
+	Buffer[4096];
+	ioctl(d, FIONREAD, &len);
+	
+	if (len > 0) 
+		len = recv(d,Buffer,len,MSG_NOSIGNAL);
+	
+	printf("READ FROM SOCKET: %s\n", Buffer);
 }
  
-/*
- * This will handle connection for each client
- * */
-void *connection_handler(void *socket_desc)
-{
-    //Get the socket descriptor
-    int sock = *(int*)socket_desc;
-    int read_size;
-    char client_message[4096] = {0};
-	
-	printf("I'm HERE!!!!!\n");
-     
-	 unsigned int counter = 0;
-	 while(true)
-	 {
-		 if(read_size = recv(sock , client_message, 4096 , MSG_NOSIGNAL) > 0)
-		 {
-			 counter += read_size;
-			 break;
-		 }
-	 }
-     
-    //Receive a message from client
-	
-    while( (read_size = recv(sock , client_message + counter , 4096 - counter , MSG_NOSIGNAL)) > 0 )
-    {
-		counter += read_size;
-        //Send the message back to client
-    }
-     
-    //Free the socket pointer
-	shutdown(sock,SHUT_RDWR);
-	close(sock);
-    free(socket_desc);
-     
-	 printf("receive from client %s\n",client_message);
-	 
-    return 0;
-}
+
 
 
