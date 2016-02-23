@@ -1,3 +1,4 @@
+#include <sys/ioctl.h>
 #include<stdio.h>
 #include<string.h>    //strlen
 #include<stdlib.h>    //strlen
@@ -7,7 +8,7 @@
  
 #include<pthread.h> //for threading , link with lpthread
  
-void *connection_handler(void *);
+void process(int d);
  
 int main(int argc , char *argv[])
 {
@@ -54,7 +55,7 @@ int main(int argc , char *argv[])
 			process(new_socket);
 			shutdown(new_socket,SHUT_RDWR);
 			close(new_socket);
-			return;
+			return 0;
 		}
 		else
 			close(new_socket);       
@@ -66,12 +67,17 @@ int main(int argc , char *argv[])
 void process(int d)
 {
 	int len = 0;
-	Buffer[4096];
+	char Buffer[4096];
+while(1)
+{
 	ioctl(d, FIONREAD, &len);
 	
-	if (len > 0) 
+	if (len > 0)
+{ 
 		len = recv(d,Buffer,len,MSG_NOSIGNAL);
-	
+		break;
+}
+}	
 	printf("READ FROM SOCKET: %s\n", Buffer);
 }
  
