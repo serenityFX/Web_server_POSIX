@@ -14,6 +14,8 @@
 void process(int d);
 void skeleton_daemon();
 
+static const char not_found[] = "HTTP/1.0 404 NOT FOUND\r\nContent-Type: text/html\r\n\r\n";
+
  
 int main(int argc , char *argv[])
 {
@@ -47,7 +49,7 @@ int main(int argc , char *argv[])
 		}
 	}
 	
-	skeleton_daemon();
+	//skeleton_daemon();
 	
 	
     int socket_desc , new_socket , c , *new_sock;
@@ -115,9 +117,11 @@ while(1)
 		break;
 }
 }	
-
-
 	printf("READ FROM SOCKET: %s\n", Buffer);
+	
+	std::string str(Buffer);
+	
+	n = send(d, not_found, sizeof(not_found), 0);
 }
 
 void skeleton_daemon()
